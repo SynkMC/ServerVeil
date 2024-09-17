@@ -1,0 +1,12 @@
+#Commands starting with the elements below will be blocked for players who don't have the serverveil.commandblocker.bypass
+#They also won't be shown when writing / in chat and pressing tab
+blocked-commands:
+  - /ver
+  - /about
+  - /plugins
+#Help command content
+help-content:
+  - Server help
+  - Read the wiki at https://wiki.example.com
+  - Join our Discord at https://discord.com/invite/JnPv4QVTKv
+  - Visit out website at https://synkdev.cc
