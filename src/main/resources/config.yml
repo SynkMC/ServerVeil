@@ -10,3 +10,23 @@ help-content:
   - Read the wiki at https://wiki.example.com
   - Join our Discord at https://discord.com/invite/JnPv4QVTKv
   - Visit out website at https://synkdev.cc
+#Lines that will show up as the description of the server in the Multiplayer screen
+motd-line-1: <gold><bold>Welcome to the server!
+motd-line-2: <gold><bold>Welcome to the server!
+#Options related to the playercount on the right side of the server on the list
+#Will set the playercount to a value of your choice if enabled
+spoof-playercount: false
+#Will show 300 connected players if above is true
+spoofed-count: 300
+#Will set the max playercount to a value of your choice if enabled
+spoof-maxcount: false
+spoofed-maxcount: 0
+#What will show when the playercount is hovered (if empty, will be a list of connected players)
+playercount-hover:
+  - <blue>Hello!
+  - That's a nice server
+  - Join Discord etc
+#What will be shown instead of the server version
+version-spoof: ServerVeil v1.1
+#Name of the file that will be used as icon. It must be a 64x64 png image placed in the plugin's folder
+icon-file: icon
