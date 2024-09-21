@@ -1,6 +1,7 @@
 package cc.synkdev.serverveil.commands;
 
 import cc.synkdev.serverveil.ServerVeil;
+import cc.synkdev.serverveil.managers.Lang;
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.CommandHelp;
 import co.aikar.commands.annotation.*;
@@ -23,6 +24,7 @@ public class VeilCmd extends BaseCommand {
     @Description("Reload the plugin configuration")
     public void onReload(CommandSender sender) {
         core.setConfig(YamlConfiguration.loadConfiguration(new File(core.getDataFolder(), "config.yml")));
+        Lang.read();
         sender.sendMessage(core.prefix()+ ChatColor.GREEN+"The plugin has been reloaded! Some changes might require a server restart to take effect.");
     }
 }

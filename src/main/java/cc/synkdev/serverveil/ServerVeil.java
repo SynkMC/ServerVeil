@@ -1,8 +1,11 @@
 package cc.synkdev.serverveil;
 
+import cc.synkdev.serverveil.commands.ActionBarCmd;
 import cc.synkdev.serverveil.commands.VeilCmd;
+import cc.synkdev.serverveil.managers.BarPlayerManager;
 import cc.synkdev.serverveil.managers.CommandBlockerListener;
 import cc.synkdev.serverveil.managers.Lang;
+import cc.synkdev.serverveil.managers.MOTDManager;
 import cc.synkdev.serverveil.objects.MOTDSettings;
 import cc.synkdev.synkLibs.bukkit.SynkLibs;
 import cc.synkdev.synkLibs.bukkit.Utils;
@@ -13,8 +16,6 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketEvent;
-import com.comphenix.protocol.wrappers.WrappedGameProfile;
-import com.comphenix.protocol.wrappers.WrappedServerPing;
 import lombok.Getter;
 import lombok.Setter;
 import org.bstats.bukkit.Metrics;
@@ -24,12 +25,15 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public final class ServerVeil extends JavaPlugin implements SynkPlugin {
     @Getter private static ServerVeil instance;
@@ -41,6 +45,7 @@ public final class ServerVeil extends JavaPlugin implements SynkPlugin {
     @Getter @Setter private FileConfiguration config;
     private PaperCommandManager commandManager;
     public MOTDSettings set;
+    @Getter private BarPlayerManager playerManager;
 
     @Override
     public void onEnable() {
@@ -51,55 +56,20 @@ public final class ServerVeil extends JavaPlugin implements SynkPlugin {
 
         Lang.init();
 
+        playerManager = new BarPlayerManager(Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI"));
+
         new Metrics(this, 23389);
 
         Utils.checkUpdate(this, this);
 
         Bukkit.getPluginManager().registerEvents(new CommandBlockerListener(), this);
+        Bukkit.getPluginManager().registerEvents(playerManager, this);
 
         ProtocolManager pM = ProtocolLibrary.getProtocolManager();
         pM.addPacketListener(new PacketAdapter(this, PacketType.Status.Server.SERVER_INFO) {
             @Override
             public void onPacketSending(PacketEvent event) {
-                WrappedServerPing ping = event.getPacket().getServerPings().read(0);
-
-                if (set.getDescription().length != 0) {
-                    ping.setMotD(Util.convertColors(set.getDescription()[0]+"\n"+set.getDescription()[1]));
-                }
-
-                if (set.getSpoofMax()) {
-                    ping.setPlayersMaximum(set.getSpoofedMax());
-                }
-
-                if (set.getSpoofCount()) {
-                    ping.setPlayersOnline(set.getSpoofedCount());
-                }
-
-                if (!set.getHover().isEmpty()) {
-                    List<WrappedGameProfile> list = new ArrayList<>();
-                    for (String s : set.getHover()) {
-                        list.add(new WrappedGameProfile(UUID.randomUUID(),Util.convertColorsSymbol(s)));
-                    }
-                    ping.setPlayers(list);
-                }
-
-                File icon = new File(getDataFolder(),set.getIcon()+".png");
-                if (icon.exists()) {
-                    try {
-                        BufferedImage image = ImageIO.read(icon);
-                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                        ImageIO.write(image, "png", baos);
-                        baos.flush();
-
-                        byte[] bytes = baos.toByteArray();
-                        String base64 = Base64.getEncoder().encodeToString(bytes);
-                        ping.setFavicon(WrappedServerPing.CompressedImage.fromBase64Png(base64));
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-
-                event.getPacket().getServerPings().write(0, ping);
+                MOTDManager.handle(event, set);
             }
         });
         /*
@@ -113,7 +83,9 @@ public final class ServerVeil extends JavaPlugin implements SynkPlugin {
         });*/
 
         commandManager = new PaperCommandManager(this);
+        commandManager.enableUnstableAPI("help");
         commandManager.registerCommand(new VeilCmd());
+        commandManager.registerCommand(new ActionBarCmd());
     }
 
     private void loadConfig() {
@@ -174,7 +146,7 @@ public final class ServerVeil extends JavaPlugin implements SynkPlugin {
 
     @Override
     public String ver() {
-        return "1.0";
+        return "1.1";
     }
 
     @Override

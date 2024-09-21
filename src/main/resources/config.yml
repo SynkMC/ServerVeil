@@ -30,3 +30,13 @@ playercount-hover:
 version-spoof: ServerVeil v1.1
 #Name of the file that will be used as icon. It must be a 64x64 png image placed in the plugin's folder
 icon-file: icon
+
+#Send messages in actionbar or not
+send-actionbar: true
+
+#List of messages that will be shown in the actionbar of the players. PlaceholderAPI is supported
+actionbar-messages:
+  - Welcome %player_name%!
+  - Have fun on the server!
+#Delay, in ms, a messages will stay on screen before switching to another one
+actionbar-delay: 2000

@@ -3,6 +3,8 @@ version: '${project.version}'
 main: cc.synkdev.serverveil.ServerVeil
 api-version: '1.13'
 depend: [SynkLibs, ProtocolLib]
+softdepend:
+  - PlaceholderAPI
 authors: [Synk]
 description: Customize your Minecraft server to the bone!
 website: https://synkdev.cc
