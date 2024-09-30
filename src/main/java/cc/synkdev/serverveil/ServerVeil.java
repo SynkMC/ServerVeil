@@ -56,7 +56,7 @@ public final class ServerVeil extends JavaPlugin implements SynkPlugin {
 
         Lang.init();
 
-        playerManager = new BarPlayerManager(Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI"));
+        if (config.getBoolean("send-actionbar")) playerManager = new BarPlayerManager(Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI"));
 
         new Metrics(this, 23389);
 
@@ -146,7 +146,7 @@ public final class ServerVeil extends JavaPlugin implements SynkPlugin {
 
     @Override
     public String ver() {
-        return "1.1";
+        return "1.2";
     }
 
     @Override
