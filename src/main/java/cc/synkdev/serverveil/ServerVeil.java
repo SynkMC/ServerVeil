@@ -4,7 +4,6 @@ import cc.synkdev.serverveil.commands.ActionBarCmd;
 import cc.synkdev.serverveil.commands.VeilCmd;
 import cc.synkdev.serverveil.managers.BarPlayerManager;
 import cc.synkdev.serverveil.managers.CommandBlockerListener;
-import cc.synkdev.serverveil.managers.Lang;
 import cc.synkdev.serverveil.managers.MOTDManager;
 import cc.synkdev.serverveil.objects.MOTDSettings;
 import cc.synkdev.synkLibs.bukkit.SynkLibs;
@@ -31,9 +30,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public final class ServerVeil extends JavaPlugin implements SynkPlugin {
     @Getter private static ServerVeil instance;
@@ -50,17 +47,12 @@ public final class ServerVeil extends JavaPlugin implements SynkPlugin {
     @Override
     public void onEnable() {
         instance = this;
-        SynkLibs.setSpl(this);
 
         this.loadConfig();
-
-        Lang.init();
 
         if (config.getBoolean("send-actionbar")) playerManager = new BarPlayerManager(Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI"));
 
         new Metrics(this, 23389);
-
-        Utils.checkUpdate(this, this);
 
         Bukkit.getPluginManager().registerEvents(new CommandBlockerListener(), this);
         Bukkit.getPluginManager().registerEvents(playerManager, this);
@@ -146,7 +138,7 @@ public final class ServerVeil extends JavaPlugin implements SynkPlugin {
 
     @Override
     public String ver() {
-        return "1.2";
+        return "1.3";
     }
 
     @Override
@@ -157,5 +149,15 @@ public final class ServerVeil extends JavaPlugin implements SynkPlugin {
     @Override
     public String prefix() {
         return ChatColor.translateAlternateColorCodes('&', "&r&8[&6ServerVeil&8] » &r");
+    }
+
+    @Override
+    public String lang() {
+        return null;
+    }
+
+    @Override
+    public Map<String, String> langMap() {
+        return Collections.emptyMap();
     }
 }
